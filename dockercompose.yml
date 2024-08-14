@@ -8,9 +8,9 @@ services:
     build: server
     environment:
       - PORT=3000
-      - BASE_API_URL=api
+      - BASE_API_URL=http://localhost:3000
       - CLIENT_URL=http://localhost:8080
-      - JWT_SECRET=update_your_JWT_secret
-      - MONGO_URI=update_your_mongo_URI
+      - JWT_SECRET=123
+      - MONGO_URI=mongodb://localhost:27017/
     ports:
       - '3000:3000'
