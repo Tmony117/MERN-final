@@ -55,7 +55,6 @@ See admin dashboard [demo](https://store-bucket.s3.us-east-2.amazonaws.com/admin
 Some basic Git commands are:
 
 ```
-$ git clone https://github.com/mohamedsamara/-ecommerce.git
 $ cd project
 $ npm install
 ```

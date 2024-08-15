@@ -57,7 +57,7 @@ const AddAddress = props => {
               type={'text'}
               error={formErrors['roomNumber']}
               label={'Room Number'}
-              name={'room number'}
+              name={'roomNumber'}
               placeholder={'Room Number'}
               value={addressFormData.roomNumber}
               onInputChange={(name, value) => {
