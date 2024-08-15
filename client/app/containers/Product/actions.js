@@ -216,7 +216,7 @@ export const addProduct = () => {
   return async (dispatch, getState) => {
     try {
       const rules = {
-        sku: 'required|alpha_dash',
+        // sku: 'required|alpha_dash',
         name: 'required',
         description: 'required|max:200',
         quantity: 'required|numeric',
@@ -233,7 +233,7 @@ export const addProduct = () => {
       const brand = unformatSelectOptions([product.brand]);
 
       const newProduct = {
-        sku: product.sku,
+        // sku: product.sku,
         name: product.name,
         description: product.description,
         price: product.price,
@@ -250,9 +250,9 @@ export const addProduct = () => {
       };
 
       const { isValid, errors } = allFieldsValidation(newProduct, rules, {
-        'required.sku': 'Sku is required.',
-        'alpha_dash.sku':
-          'Sku may have alpha-numeric characters, as well as dashes and underscores only.',
+        // 'required.sku': 'Sku is required.',
+        // 'alpha_dash.sku':
+        //   'Sku may have alpha-numeric characters, as well as dashes and underscores only.',
         'required.name': 'Name is required.',
         'required.description': 'Description is required.',
         'max.description':
@@ -287,7 +287,7 @@ export const addProduct = () => {
       const successfulOptions = {
         title: `${response.data.message}`,
         position: 'tr',
-        autoDismiss: 1
+        autoDismiss: 5
       };
 
       if (response.data.success === true) {
@@ -326,7 +326,7 @@ export const updateProduct = () => {
 
       const newProduct = {
         name: product.name,
-        sku: product.sku,
+        // sku: product.sku,
         slug: product.slug,
         description: product.description,
         quantity: product.quantity,
@@ -366,7 +366,7 @@ export const updateProduct = () => {
       const successfulOptions = {
         title: `${response.data.message}`,
         position: 'tr',
-        autoDismiss: 1
+        autoDismiss: 5
       };
 
       if (response.data.success === true) {
@@ -393,7 +393,7 @@ export const activateProduct = (id, value) => {
       const successfulOptions = {
         title: `${response.data.message}`,
         position: 'tr',
-        autoDismiss: 1
+        autoDismiss: 5
       };
 
       if (response.data.success === true) {
@@ -414,7 +414,7 @@ export const deleteProduct = id => {
       const successfulOptions = {
         title: `${response.data.message}`,
         position: 'tr',
-        autoDismiss: 1
+        autoDismiss: 5
       };
 
       if (response.data.success === true) {

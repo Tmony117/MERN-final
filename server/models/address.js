@@ -10,16 +10,10 @@ const AddressSchema = new Schema({
   address: {
     type: String
   },
-  city: {
+  hostel: {
     type: String
   },
-  state: {
-    type: String
-  },
-  country: {
-    type: String
-  },
-  zipCode: {
+  roomNumber: {
     type: String
   },
   isDefault: {

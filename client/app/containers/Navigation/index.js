@@ -34,7 +34,7 @@ import { BarsIcon } from '../../components/Common/Icon';
 import MiniBrand from '../../components/Store//MiniBrand';
 import Menu from '../NavigationMenu';
 import Cart from '../Cart';
-
+import logo from "../../../public/images/logo.jpg"
 class Navigation extends React.PureComponent {
   componentDidMount() {
     this.props.fetchStoreBrands();
@@ -141,20 +141,16 @@ class Navigation extends React.PureComponent {
           <Container>
             <Row>
               <Col md='4' className='text-center d-none d-md-block'>
-                <i className='fa fa-truck' />
-                <span>Free Shipping</span>
-              </Col>
-              <Col md='4' className='text-center d-none d-md-block'>
                 <i className='fa fa-credit-card' />
                 <span>Payment Methods</span>
               </Col>
               <Col md='4' className='text-center d-none d-md-block'>
                 <i className='fa fa-phone' />
-                <span>Call us 951-999-9999</span>
+                <span>Call us 054-642-1117</span>
               </Col>
               <Col xs='12' className='text-center d-block d-md-none'>
                 <i className='fa fa-phone' />
-                <span> Need advice? Call us 951-999-9999</span>
+                <span>Call us 054-642-1117</span>
               </Col>
             </Row>
           </Container>
@@ -180,7 +176,10 @@ class Navigation extends React.PureComponent {
                   />
                 )}
                 <Link to='/'>
-                  <h1 className='logo'>MERN Store</h1>
+                <img src='./U-SHOP l'>
+                
+                </img>
+                  <h1 className='logo'>U-SHOP</h1>
                 </Link>
               </div>
             </Col>
@@ -226,7 +225,6 @@ class Navigation extends React.PureComponent {
               sm={{ size: 12, order: 2 }}
               md={{ size: 9, order: 1 }}
               lg={{ size: 4, order: 3 }}
-              // className='px-0'
             >
               <Navbar color='light' light expand='md' className='mt-1 mt-md-0'>
                 <CartIcon

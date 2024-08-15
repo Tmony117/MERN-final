@@ -183,7 +183,7 @@ router.post(
   upload.single('image'),
   async (req, res) => {
     try {
-      const sku = req.body.sku;
+      // const sku = req.body.sku;
       const name = req.body.name;
       const description = req.body.description;
       const quantity = req.body.quantity;
@@ -193,9 +193,9 @@ router.post(
       const brand = req.body.brand;
       const image = req.file;
 
-      if (!sku) {
-        return res.status(400).json({ error: 'You must enter sku.' });
-      }
+      // if (!sku) {
+      //   return res.status(400).json({ error: 'You must enter sku.' });
+      // }
 
       if (!description || !name) {
         return res
@@ -211,16 +211,16 @@ router.post(
         return res.status(400).json({ error: 'You must enter a price.' });
       }
 
-      const foundProduct = await Product.findOne({ sku });
+      // const foundProduct = await Product.findOne({ sku });
 
-      if (foundProduct) {
-        return res.status(400).json({ error: 'This sku is already in use.' });
-      }
+      // if (foundProduct) {
+      //   return res.status(400).json({ error: 'This sku is already in use.' });
+      // }
 
       const { imageUrl, imageKey } = await s3Upload(image);
 
       const product = new Product({
-        sku,
+        // sku,
         name,
         description,
         quantity,
@@ -350,16 +350,16 @@ router.put(
       const productId = req.params.id;
       const update = req.body.product;
       const query = { _id: productId };
-      const { sku, slug } = req.body.product;
+      const { slug } = req.body.product;
 
       const foundProduct = await Product.findOne({
-        $or: [{ slug }, { sku }]
+        $or: [{ slug }]
       });
 
       if (foundProduct && foundProduct._id != productId) {
         return res
           .status(400)
-          .json({ error: 'Sku or slug is already in use.' });
+          .json({ error: 'slug is already in use.' });
       }
 
       await Product.findOneAndUpdate(query, update, {

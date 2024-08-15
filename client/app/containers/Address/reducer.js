@@ -21,19 +21,15 @@ const initialState = {
   addresses: [],
   addressFormData: {
     address: '',
-    city: '',
-    state: '',
-    country: '',
-    zipCode: '',
+    hostel: '',
+    roomNumber: '',
     isDefault: false
   },
   address: {
     _id: '',
     address: '',
-    city: '',
-    state: '',
-    country: '',
-    zipCode: '',
+    hostel: '',
+    roomNumber: '',
     isDefault: false
   },
   formErrors: {},
@@ -98,10 +94,8 @@ const addressReducer = (state = initialState, action) => {
         ...state,
         addressFormData: {
           address: '',
-          city: '',
-          state: '',
-          country: '',
-          zipCode: '',
+          hostel: '',
+          roomNumber: '',
           isDefault: false
         },
         formErrors: {}

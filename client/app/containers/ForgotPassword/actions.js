@@ -48,7 +48,7 @@ export const forgotPassowrd = () => {
       const successfulOptions = {
         title: `${response.data.message}`,
         position: 'tr',
-        autoDismiss: 1
+        autoDismiss: 5
       };
 
       if (response.data.success === true) {

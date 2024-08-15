@@ -12,9 +12,9 @@ Mongoose.plugin(slug, options);
 
 // Product Schema
 const ProductSchema = new Schema({
-  sku: {
-    type: String
-  },
+  // sku: {
+  //   type: String
+  // },
   name: {
     type: String,
     trim: true

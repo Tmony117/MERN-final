@@ -61,7 +61,7 @@ const EditProduct = props => {
               }}
             />
           </Col>
-          <Col xs='12'>
+          {/* <Col xs='12'>
             <Input
               type={'text'}
               error={formErrors['sku']}
@@ -73,7 +73,7 @@ const EditProduct = props => {
                 productChange(name, value);
               }}
             />
-          </Col>
+          </Col> */}
           <Col xs='12'>
             <Input
               type={'text'}
