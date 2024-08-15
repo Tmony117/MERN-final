@@ -15,7 +15,8 @@ const mailgun = require('../../services/mailgun');
 // add merchant api
 router.post('/add', async (req, res) => {
   try {
-    const { name, business, phoneNumber, email, brandName } = req.body;
+    const { name, business, phoneNumber, email, brandName, isStudent } =
+      req.body;
 
     if (!name || !email) {
       return res
@@ -48,7 +49,8 @@ router.post('/add', async (req, res) => {
       email,
       business,
       phoneNumber,
-      brandName
+      brandName,
+      isStudent: !!isStudent
     });
     const merchantDoc = await merchant.save();
 
@@ -67,21 +69,61 @@ router.post('/add', async (req, res) => {
 });
 
 // search merchants api
+// router.get('/search', auth, role.check(ROLES.Admin), async (req, res) => {
+//   try {
+//     const { search } = req.query;
+
+//     const regex = new RegExp(search, 'i');
+
+//     const merchants = await Merchant.find({
+//       $or: [
+//         { phoneNumber: { $regex: regex } },
+//         { email: { $regex: regex } },
+//         { name: { $regex: regex } },
+//         { brandName: { $regex: regex } },
+//         { status: { $regex: regex } }
+//       ]
+//     }).populate('brand', 'name');
+
+//     res.status(200).json({
+//       merchants
+//     });
+//   } catch (error) {
+//     res.status(400).json({
+//       error: 'Your request could not be processed. Please try again.'
+//     });
+//   }
+// });
+
 router.get('/search', auth, role.check(ROLES.Admin), async (req, res) => {
   try {
     const { search } = req.query;
 
     const regex = new RegExp(search, 'i');
 
-    const merchants = await Merchant.find({
-      $or: [
-        { phoneNumber: { $regex: regex } },
-        { email: { $regex: regex } },
-        { name: { $regex: regex } },
-        { brandName: { $regex: regex } },
-        { status: { $regex: regex } }
-      ]
-    }).populate('brand', 'name');
+    const merchants = await Merchant.aggregate([
+      {
+        $match: {
+          $or: [
+            { phoneNumber: { $regex: regex } },
+            { email: { $regex: regex } },
+            { name: { $regex: regex } },
+            { brandName: { $regex: regex } },
+            { status: { $regex: regex } }
+          ]
+        }
+      },
+      {
+        $addFields: {
+          sortOrder: {
+            $cond: { if: '$isStudent', then: 0, else: 1 }
+          }
+        }
+      },
+      {
+        $sort: { sortOrder: 1, name: 1 }
+      }
+    ]).exec();
 
     res.status(200).json({
       merchants
@@ -233,6 +275,7 @@ router.post('/signup/:token', async (req, res) => {
       firstName,
       lastName,
       password: hash,
+      isStudent: !!isStudent,
       resetPasswordToken: undefined
     };
 
@@ -321,7 +364,8 @@ const createMerchantUser = async (email, name, merchant, host) => {
     const query = { _id: existingUser._id };
     const update = {
       merchant,
-      role: ROLES.Merchant
+      role: ROLES.Merchant,
+      isStudent
     };
 
     const merchantDoc = await Merchant.findOne({
@@ -346,7 +390,8 @@ const createMerchantUser = async (email, name, merchant, host) => {
       lastName,
       resetPasswordToken,
       merchant,
-      role: ROLES.Merchant
+      role: ROLES.Merchant,
+      isStudent: merchantDoc.isStudent
     });
 
     await mailgun.sendEmail(email, 'merchant-signup', host, {

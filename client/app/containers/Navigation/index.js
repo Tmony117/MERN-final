@@ -34,7 +34,7 @@ import { BarsIcon } from '../../components/Common/Icon';
 import MiniBrand from '../../components/Store//MiniBrand';
 import Menu from '../NavigationMenu';
 import Cart from '../Cart';
-import logo from "../../../public/images/logo.jpg"
+import logo from '../../../public/images/logo.jpg';
 class Navigation extends React.PureComponent {
   componentDidMount() {
     this.props.fetchStoreBrands();
@@ -176,10 +176,7 @@ class Navigation extends React.PureComponent {
                   />
                 )}
                 <Link to='/'>
-                <img src='./U-SHOP l'>
-                
-                </img>
-                  <h1 className='logo'>U-SHOP</h1>
+                  <img src={logo} alt='U-SHOP'></img>
                 </Link>
               </div>
             </Col>

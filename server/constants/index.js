@@ -10,6 +10,11 @@ exports.MERCHANT_STATUS = {
   Waiting_Approval: 'Waiting Approval'
 };
 
+exports.MERCHANT_TYPES = {
+  Regular: 'Regular',
+  Student: 'Student'
+};
+
 exports.CART_ITEM_STATUS = {
   Processing: 'Processing',
   Shipped: 'Shipped',
@@ -25,9 +30,9 @@ exports.REVIEW_STATUS = {
 };
 
 exports.EMAIL_PROVIDER = {
-  Email: 'Email',
-  Google: 'Google',
-  Facebook: 'Facebook'
+  Email: 'Email'
+  // Google: 'Google',
+  // Facebook: 'Facebook'
 };
 
 exports.JWT_COOKIE = 'x-jwt-cookie';

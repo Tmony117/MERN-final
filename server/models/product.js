@@ -12,9 +12,6 @@ Mongoose.plugin(slug, options);
 
 // Product Schema
 const ProductSchema = new Schema({
-  // sku: {
-  //   type: String
-  // },
   name: {
     type: String,
     trim: true
@@ -40,10 +37,10 @@ const ProductSchema = new Schema({
   price: {
     type: Number
   },
-  taxable: {
-    type: Boolean,
-    default: false
-  },
+  // taxable: {
+  //   type: Boolean,
+  //   default: false
+  // },
   isActive: {
     type: Boolean,
     default: true
