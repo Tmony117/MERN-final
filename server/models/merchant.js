@@ -32,6 +32,7 @@ const MerchantSchema = new Schema({
     type: Boolean,
     default: false
   },
+  ////////////////////////////////////////////////////////
   brand: {
     type: Schema.Types.ObjectId,
     ref: 'Brand',
