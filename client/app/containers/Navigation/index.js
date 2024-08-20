@@ -96,7 +96,7 @@ class Navigation extends React.PureComponent {
               </Row>
               <Row>
                 <Col>
-                  <span className='price'>${suggestion.price}</span>
+                  <span className='price'>gh₵{suggestion.price}</span>
                 </Col>
               </Row>
             </Container>

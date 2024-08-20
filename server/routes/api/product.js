@@ -121,139 +121,33 @@ router.get('/list/search/:name', async (req, res) => {
     });
   }
 });
-// router.get('/list/search/:name', async (req, res) => {
-//   try {
-//     const name = req.params.name;
 
-//     const productDoc = await Product.find(
-//       { name: { $regex: new RegExp(name), $options: 'is' }, isActive: true },
-//       { name: 1, slug: 1, imageUrl: 1, price: 1, _id: 0 }
-//     );
-
-//     if (productDoc.length < 0) {
-//       return res.status(404).json({
-//         message: 'No product found.'
-//       });
-//     }
-
-//     res.status(200).json({
-//       products: productDoc
-//     });
-//   } catch (error) {
-//     res.status(400).json({
-//       error: 'Your request could not be processed. Please try again.'
-//     });
-//   }
-// });
-
-// fetch store products by advanced filters api
-router.get('/list', async (req, res) => {
+router.get('/list/search/:name', async (req, res) => {
   try {
-    let {
-      sortOrder,
-      rating,
-      max,
-      min,
-      category,
-      brand,
-      page = 1,
-      limit = 10
-    } = req.query;
-    sortOrder = JSON.parse(sortOrder);
+    const name = req.params.name;
 
-    const categoryFilter = category ? { category } : {};
-    const basicQuery = getStoreProductsQuery(min, max, rating);
+    const productDoc = await Product.find(
+      { name: { $regex: new RegExp(name), $options: 'is' }, isActive: true },
+      { name: 1, slug: 1, imageUrl: 1, price: 1, _id: 0 }
+    );
 
-    const userDoc = await checkAuth(req);
-    const categoryDoc = await Category.findOne({
-      slug: categoryFilter.category,
-      isActive: true
-    });
-
-    if (categoryDoc) {
-      basicQuery.push({
-        $match: {
-          isActive: true,
-          _id: {
-            $in: Array.from(categoryDoc.products)
-          }
-        }
+    if (productDoc.length < 0) {
+      return res.status(404).json({
+        message: 'No product found.'
       });
-    }
-
-    const brandDoc = await Brand.findOne({
-      slug: brand,
-      isActive: true
-    });
-
-    if (brandDoc) {
-      basicQuery.push({
-        $match: {
-          'brand._id': { $eq: brandDoc._id }
-        }
-      });
-    }
-
-    // Add lookup for merchant info
-    basicQuery.push({
-      $lookup: {
-        from: 'merchants',
-        localField: 'brand.merchant',
-        foreignField: '_id',
-        as: 'merchantInfo'
-      }
-    });
-
-    // Add fields for student priority
-    basicQuery.push({
-      $addFields: {
-        isStudentMerchant: { $arrayElemAt: ['$merchantInfo.isStudent', 0] },
-        sortOrder: {
-          $cond: {
-            if: { $arrayElemAt: ['$merchantInfo.isStudent', 0] },
-            then: 0,
-            else: 1
-          }
-        }
-      }
-    });
-
-    let products = null;
-    const productsCount = await Product.aggregate(basicQuery);
-    const count = productsCount.length;
-    const size = count > limit ? page - 1 : 0;
-    const currentPage = count > limit ? Number(page) : 1;
-
-    // Modify paginate query to include student priority
-    const paginateQuery = [
-      { $sort: { sortOrder: 1, ...sortOrder } },
-      { $skip: size * limit },
-      { $limit: limit * 1 },
-      { $project: { merchantInfo: 0, sortOrder: 0 } } // Remove extra fields from result
-    ];
-
-    if (userDoc) {
-      const wishListQuery = getStoreProductsWishListQuery(userDoc.id).concat(
-        basicQuery
-      );
-      products = await Product.aggregate(wishListQuery.concat(paginateQuery));
-    } else {
-      products = await Product.aggregate(basicQuery.concat(paginateQuery));
     }
 
     res.status(200).json({
-      products,
-      totalPages: Math.ceil(count / limit),
-      currentPage,
-      count
+      products: productDoc
     });
   } catch (error) {
-    console.log('error', error);
     res.status(400).json({
       error: 'Your request could not be processed. Please try again.'
     });
   }
 });
+
+// fetch store products by advanced filters api
 // router.get('/list', async (req, res) => {
 //   try {
 //     let {
@@ -301,17 +195,42 @@ router.get('/list', async (req, res) => {
 //       });
 //     }
 
+//     // Add lookup for merchant info
+//     basicQuery.push({
+//       $lookup: {
+//         from: 'merchants',
+//         localField: 'brand.merchant',
+//         foreignField: '_id',
+//         as: 'merchantInfo'
+//       }
+//     });
+
+//     // Add fields for student priority
+//     basicQuery.push({
+//       $addFields: {
+//         isStudentMerchant: { $arrayElemAt: ['$merchantInfo.isStudent', 0] },
+//         sortOrder: {
+//           $cond: {
+//             if: { $arrayElemAt: ['$merchantInfo.isStudent', 0] },
+//             then: 0,
+//             else: 1
+//           }
+//         }
+//       }
+//     });
+
 //     let products = null;
 //     const productsCount = await Product.aggregate(basicQuery);
 //     const count = productsCount.length;
 //     const size = count > limit ? page - 1 : 0;
 //     const currentPage = count > limit ? Number(page) : 1;
 
-//     // paginate query
+//     // Modify paginate query to include student priority
 //     const paginateQuery = [
-//       { $sort: sortOrder },
+//       { $sort: { sortOrder: 1, ...sortOrder } },
 //       { $skip: size * limit },
-//       { $limit: limit * 1 }
+//       { $limit: limit * 1 },
+//       { $project: { merchantInfo: 0, sortOrder: 0 } } // Remove extra fields from result
 //     ];
 
 //     if (userDoc) {
@@ -336,6 +255,88 @@ router.get('/list', async (req, res) => {
 //     });
 //   }
 // });
+router.get('/list', async (req, res) => {
+  try {
+    let {
+      sortOrder,
+      rating,
+      max,
+      min,
+      category,
+      brand,
+      page = 1,
+      limit = 10
+    } = req.query;
+    sortOrder = JSON.parse(sortOrder);
+
+    const categoryFilter = category ? { category } : {};
+    const basicQuery = getStoreProductsQuery(min, max, rating);
+
+    const userDoc = await checkAuth(req);
+    const categoryDoc = await Category.findOne({
+      slug: categoryFilter.category,
+      isActive: true
+    });
+
+    if (categoryDoc) {
+      basicQuery.push({
+        $match: {
+          isActive: true,
+          _id: {
+            $in: Array.from(categoryDoc.products)
+          }
+        }
+      });
+    }
+
+    const brandDoc = await Brand.findOne({
+      slug: brand,
+      isActive: true
+    });
+
+    if (brandDoc) {
+      basicQuery.push({
+        $match: {
+          'brand._id': { $eq: brandDoc._id }
+        }
+      });
+    }
+
+    let products = null;
+    const productsCount = await Product.aggregate(basicQuery);
+    const count = productsCount.length;
+    const size = count > limit ? page - 1 : 0;
+    const currentPage = count > limit ? Number(page) : 1;
+
+    // paginate query
+    const paginateQuery = [
+      { $sort: sortOrder },
+      { $skip: size * limit },
+      { $limit: limit * 1 }
+    ];
+
+    if (userDoc) {
+      const wishListQuery = getStoreProductsWishListQuery(userDoc.id).concat(
+        basicQuery
+      );
+      products = await Product.aggregate(wishListQuery.concat(paginateQuery));
+    } else {
+      products = await Product.aggregate(basicQuery.concat(paginateQuery));
+    }
+
+    res.status(200).json({
+      products,
+      totalPages: Math.ceil(count / limit),
+      currentPage,
+      count
+    });
+  } catch (error) {
+    console.log('error', error);
+    res.status(400).json({
+      error: 'Your request could not be processed. Please try again.'
+    });
+  }
+});
 
 router.get('/list/select', auth, async (req, res) => {
   try {

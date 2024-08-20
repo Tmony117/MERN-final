@@ -39,7 +39,7 @@ const AddProduct = props => {
     <div className='add-product'>
       <form onSubmit={handleSubmit} noValidate>
         <Row>
-          {/* <Col xs='12' lg='6'>
+          <Col xs='12' lg='6'>
             <Input
               type={'text'}
               error={formErrors['sku']}
@@ -51,7 +51,7 @@ const AddProduct = props => {
                 productChange(name, value);
               }}
             />
-          </Col> */}
+          </Col>
           <Col xs='12' lg='6'>
             <Input
               type={'text'}

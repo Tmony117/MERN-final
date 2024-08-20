@@ -24,7 +24,7 @@ const SocialShare = props => {
 
   return (
     <ul className='d-flex flex-row mx-0 mb-0 justify-content-center justify-content-md-start share-box'>
-      <li>
+      {/* <li>
         <FacebookShareButton url={`${shareMsg}`} className='share-btn facebook'>
           <i className='fa fa-facebook'></i>
         </FacebookShareButton>
@@ -43,7 +43,7 @@ const SocialShare = props => {
         <WhatsappShareButton url={`${shareMsg}`} className='share-btn whatsapp'>
           <i className='fa fa-whatsapp'></i>
         </WhatsappShareButton>
-      </li>
+      </li> */}
     </ul>
   );
 };
