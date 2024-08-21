@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  client:
+    build: ./client
+    ports:
+      - '8080:8080'
+    depends_on:
+      - server
+
+  server:
+    build: ./server
+    environment:
+      - PORT=3000
+      - BASE_API_URL=http://server:3000
+      - CLIENT_URL=http://client:8080
+      - JWT_SECRET=123
+      - MONGO_URI=mongodb://mongo:27017/
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - '27017:27017'
