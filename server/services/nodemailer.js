@@ -1,38 +1,54 @@
-const Mailgun = require('mailgun-js');
-
+const nodemailer = require('nodemailer');
 const template = require('../config/template');
 const keys = require('../config/keys');
 
-const { key, domain, sender } = keys.mailgun;
+const { port, user, host, password } = keys.smtp;
 
-class MailgunService {
+class MailService {
   init() {
     try {
-      return new Mailgun({
-        apiKey: key,
-        domain: domain
+      return nodemailer.createTransport({
+        host: host,
+        port: parseInt(port || '465', 10),
+        secure: port === '465', // use SSL
+        auth: {
+          user: user,
+          pass: password
+        }
       });
     } catch (error) {
-      console.warn('Missing mailgun keys');
+      console.error('Failed to initialize nodemailer transporter:', error);
+      return null;
     }
   }
 }
 
-const mailgun = new MailgunService().init();
+const mailer = new MailService().init();
 
 exports.sendEmail = async (email, type, host, data) => {
+  if (!mailer) {
+    console.error('Mailer is not initialized. Cannot send email.');
+    return new Error('Mailer is not initialized');
+  }
+
   try {
+    console.log(`Preparing to send ${type} email to ${email}`);
     const message = prepareTemplate(type, host, data);
 
-    const config = {
-      from: `U-SHOP Store! <${sender}>`,
+    const mailOptions = {
+      from: `U-SHOP Store! <${user}>`,
       to: email,
       subject: message.subject,
-      text: message.text
+      text: message.text,
+      html: message.html // Added HTML option
     };
 
-    return await mailgun.messages().send(config);
+    console.log('Attempting to send email...');
+    const info = await mailer.sendMail(mailOptions);
+    console.log('Email sent successfully:', info.messageId);
+    return info;
   } catch (error) {
+    console.error('Failed to send email:', error);
     return error;
   }
 };
@@ -82,6 +98,7 @@ const prepareTemplate = (type, host, data) => {
       break;
 
     default:
+      console.warn(`Unknown email type: ${type}`);
       message = '';
   }
 
