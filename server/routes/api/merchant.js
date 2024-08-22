@@ -56,7 +56,7 @@ router.post('/add', async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: `We received your request! we will reach you on your phone number ${phoneNumber}!`,
+      message: `We received your request! we will reach you on your email ${email}!`,
       merchant: merchantDoc
     });
   } catch (error) {

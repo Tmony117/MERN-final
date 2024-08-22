@@ -9,11 +9,14 @@ class MailService {
     try {
       return nodemailer.createTransport({
         host: host,
-        port: parseInt(port || '465', 10),
+        port: parseInt(port || '587', 10),
         secure: port === '465', // use SSL
         auth: {
           user: user,
           pass: password
+        },
+        tls: {
+          rejectUnauthorized: false // Add this line to ignore unauthorized SSL/TLS certificates
         }
       });
     } catch (error) {

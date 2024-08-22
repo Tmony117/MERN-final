@@ -109,7 +109,7 @@ const OrderItems = props => {
                           </Link>
                           <div className='d-flex align-items-center justify-content-between'>
                             <span className='price'>
-                              ${item.purchasePrice || item.product.price}
+                              Ghana Cedis {item.purchasePrice || item.product.price}
                             </span>
                           </div>
                         </>
