@@ -10,13 +10,12 @@ const User = require('../../models/user');
 const Brand = require('../../models/brand');
 const auth = require('../../middleware/auth');
 const role = require('../../middleware/role');
-const nodemailer = require('../../services/nodemailer');
+const mailgun = require('../../services/mailgun');
 
 // add merchant api
 router.post('/add', async (req, res) => {
   try {
-    const { name, business, phoneNumber, email, brandName, isStudent } =
-      req.body;
+    const { name, business, phoneNumber, email, brandName } = req.body;
 
     if (!name || !email) {
       return res
@@ -49,12 +48,11 @@ router.post('/add', async (req, res) => {
       email,
       business,
       phoneNumber,
-      brandName,
-      isStudent: !!isStudent
+      brandName
     });
     const merchantDoc = await merchant.save();
 
-    await nodemailer.sendEmail(email, 'merchant-application');
+    await mailgun.sendEmail(email, 'merchant-application');
 
     res.status(200).json({
       success: true,
@@ -69,61 +67,21 @@ router.post('/add', async (req, res) => {
 });
 
 // search merchants api
-// router.get('/search', auth, role.check(ROLES.Admin), async (req, res) => {
-//   try {
-//     const { search } = req.query;
-
-//     const regex = new RegExp(search, 'i');
-
-//     const merchants = await Merchant.find({
-//       $or: [
-//         { phoneNumber: { $regex: regex } },
-//         { email: { $regex: regex } },
-//         { name: { $regex: regex } },
-//         { brandName: { $regex: regex } },
-//         { status: { $regex: regex } }
-//       ]
-//     }).populate('brand', 'name');
-
-//     res.status(200).json({
-//       merchants
-//     });
-//   } catch (error) {
-//     res.status(400).json({
-//       error: 'Your request could not be processed. Please try again.'
-//     });
-//   }
-// });
-
 router.get('/search', auth, role.check(ROLES.Admin), async (req, res) => {
   try {
     const { search } = req.query;
 
     const regex = new RegExp(search, 'i');
 
-    const merchants = await Merchant.aggregate([
-      {
-        $match: {
-          $or: [
-            { phoneNumber: { $regex: regex } },
-            { email: { $regex: regex } },
-            { name: { $regex: regex } },
-            { brandName: { $regex: regex } },
-            { status: { $regex: regex } }
-          ]
-        }
-      },
-      {
-        $addFields: {
-          sortOrder: {
-            $cond: { if: '$isStudent', then: 0, else: 1 }
-          }
-        }
-      },
-      {
-        $sort: { sortOrder: 1, name: 1 }
-      }
-    ]).exec();
+    const merchants = await Merchant.find({
+      $or: [
+        { phoneNumber: { $regex: regex } },
+        { email: { $regex: regex } },
+        { name: { $regex: regex } },
+        { brandName: { $regex: regex } },
+        { status: { $regex: regex } }
+      ]
+    }).populate('brand', 'name');
 
     res.status(200).json({
       merchants
@@ -175,10 +133,7 @@ router.put('/:id/active', auth, async (req, res) => {
 
     if (!update.isActive) {
       await deactivateBrand(merchantId);
-      await nodemailer.sendEmail(
-        merchantDoc.email,
-        'merchant-deactivate-account'
-      );
+      await mailgun.sendEmail(merchantDoc.email, 'merchant-deactivate-account');
     }
 
     res.status(200).json({
@@ -278,7 +233,6 @@ router.post('/signup/:token', async (req, res) => {
       firstName,
       lastName,
       password: hash,
-      isStudent: !!isStudent,
       resetPasswordToken: undefined
     };
 
@@ -367,8 +321,7 @@ const createMerchantUser = async (email, name, merchant, host) => {
     const query = { _id: existingUser._id };
     const update = {
       merchant,
-      role: ROLES.Merchant,
-      isStudent
+      role: ROLES.Merchant
     };
 
     const merchantDoc = await Merchant.findOne({
@@ -377,7 +330,7 @@ const createMerchantUser = async (email, name, merchant, host) => {
 
     await createMerchantBrand(merchantDoc);
 
-    await nodemailer.sendEmail(email, 'merchant-welcome', null, name);
+    await mailgun.sendEmail(email, 'merchant-welcome', null, name);
 
     return await User.findOneAndUpdate(query, update, {
       new: true
@@ -393,11 +346,10 @@ const createMerchantUser = async (email, name, merchant, host) => {
       lastName,
       resetPasswordToken,
       merchant,
-      role: ROLES.Merchant,
-      isStudent: merchantDoc.isStudent
+      role: ROLES.Merchant
     });
 
-    await nodemailer.sendEmail(email, 'merchant-signup', host, {
+    await mailgun.sendEmail(email, 'merchant-signup', host, {
       resetToken,
       email
     });

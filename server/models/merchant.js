@@ -27,12 +27,6 @@ const MerchantSchema = new Schema({
     type: Boolean,
     default: false
   },
-  // implementation of logic to profit students !!!!!!!!
-  isStudent: {
-    type: Boolean,
-    default: false
-  },
-  ////////////////////////////////////////////////////////
   brand: {
     type: Schema.Types.ObjectId,
     ref: 'Brand',
